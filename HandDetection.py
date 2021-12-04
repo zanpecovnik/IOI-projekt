@@ -1,6 +1,6 @@
 import cv2
-import time
 import os
+import HandDetectionModule as hdm
 
 camWidth, camHeight = 1280, 720
 imageDir = "images"
@@ -19,8 +19,11 @@ cap = cv2.VideoCapture(0)
 cap.set(3, camWidth)
 cap.set(4, camHeight)
 
+detector = hdm.handDetector(detectionCon=0.75)
+
 while True:
     success, img = cap.read()
+    img = detector.findHands(img)
 
     for position in overlayImagePositions:
         img[position['y'] : position['y'] + overlayImageSize, position['x'] : position['x'] + overlayImageSize] = overlayImage
