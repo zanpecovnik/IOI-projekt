@@ -15,9 +15,27 @@ def findImageInFrontOfHand(avgPosition):
             return imagePosition
     return None
 
-def getQuoteForImage(position):
+def getQuoteForImage(position, emotion="Vesel"):
     idx = overlayImagePositions.index(position)
-    return "To je quote", idx
+    return quotes[emotion][idx], idx
+
+quotes = {
+    "Vesel": [
+        "Prvi vesel", "drugi vesel", "tretji vesel", "cetrti vesel", "peti vesel"
+    ],
+    "Jezen": [
+        "Prvi jezen", "drugi jezen", "tretji jezen", "cetrti jezen", "peti jezen"
+    ],
+    "Zalosten": [
+        "Prvi zalosten", "drugi zalosten", "tretji zalosten", "cetrti zalosten", "peti zalosten"
+    ],
+    "Nevtralen": [
+        "Prvi nevtralen", "drugi nevtralen", "tretji nevtralen", "cetrti nevtralen", "peti nevtralen"
+    ],
+    "Presenecen": [
+        "Prvi presenecen", "drugi presenecen", "tretji presenecen", "cetrti presenecen", "peti presenecen"
+    ]
+}
 
 camWidth, camHeight = 1280, 720
 imageDir = "images"
@@ -99,7 +117,7 @@ while True:
 
     for i, position in enumerate(overlayImagePositions):
         if idx > -1 and i == idx:
-            cv2.putText(img, quote, (int(position['x'] - overlayImageSize / 2), int(position['y'] + overlayImageSize / 2)), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 0), 3)
+            cv2.putText(img, quote, (position['x'], int(position['y'] + overlayImageSize / 2)), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
         else:
             img[position['y'] : position['y'] + overlayImageSize, position['x'] : position['x'] + overlayImageSize] = overlayImage
 
