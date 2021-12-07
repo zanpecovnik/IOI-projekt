@@ -12,6 +12,8 @@ import keyboard
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+import ctypes
+
 def selectedEmotion(frame, emotion, size=50, alpha=0.3):
     image_dir = "images"
 
@@ -95,6 +97,9 @@ def selectedEmotion(frame, emotion, size=50, alpha=0.3):
 
 
 def work():
+
+    WINDOW_NAME = 'Full Integration'
+
     dataDir = "data"
     shape_x = 48
     shape_y = 48
@@ -102,19 +107,35 @@ def work():
     face_classifier = cv2.CascadeClassifier(f'{dataDir}/haarcascade_frontalface_default.xml')
     model = load_model(f'{dataDir}/video.h5', compile=False)
 
-    cam_width, cam_height = 1280, 720
     cap = cv2.VideoCapture(0)
-    cap.set(3, cam_width)
-    cap.set(4, cam_height)
+    cv2.namedWindow(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     prediction = ""
     max_seconds = 30
     start_time = time.time()
     read = False
     while True:
+
+        user32 = ctypes.windll.user32
+        screen_width, screen_height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+
         ret, frame = cap.read()
+        frame_height, frame_width, _ = frame.shape
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_classifier.detectMultiScale(gray, 1.3, 5)
+
+        scale_width = float(screen_width) / float(frame_width)
+        scale_height = float(screen_height) / float(frame_height)
+
+        if scale_height > scale_width:
+            imgScale = scale_width
+
+        else:
+            imgScale = scale_height
+
+        new_x, new_y = frame.shape[1] * imgScale, frame.shape[0] * imgScale
+        frame = cv2.resize(frame, (int(new_x), int(new_y)))
 
         # Read the emotion
         if time.time() - start_time < max_seconds and not read:
@@ -169,7 +190,7 @@ def work():
         else:
             selectedEmotion(frame, prediction)
 
-        cv2.imshow('Emotion Detector', frame)
+        cv2.imshow(WINDOW_NAME, frame)
 
         # Q = Quit
         if cv2.waitKey(1) & 0xFF == ord('q'):
