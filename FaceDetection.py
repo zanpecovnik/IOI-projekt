@@ -9,6 +9,8 @@ import dlib
 from tensorflow.keras.models import load_model
 from imutils import face_utils
 
+import time
+import keyboard
 
 def work():
     shape_x = 48
@@ -19,58 +21,82 @@ def work():
 
     video_capture = cv2.VideoCapture(0)
 
+    max_seconds = 10
+    start_time = time.time()
+    read = False
+
+    prediction = ""
+    position = 0
     while True:
 
         # Capture frame-by-frame
         ret, frame = video_capture.read()
-
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         rects = face_detect(gray, 1)
 
-        for (i, rect) in enumerate(rects):
+        # Read the emotion
+        if time.time() - start_time < max_seconds and not read:
+            for (i, rect) in enumerate(rects):
 
-            # Face coordinates
-            (x, y, w, h) = face_utils.rect_to_bb(rect)
-            face = gray[y:y + h, x:x + w]
+                # Face coordinates
+                (x, y, w, h) = face_utils.rect_to_bb(rect)
+                face = gray[y:y + h, x:x + w]
 
-            # Zoom on face
-            face = zoom(face, (shape_x / face.shape[0], shape_y / face.shape[1]))
-            face = face.astype(np.float32)
+                # Zoom on face
+                face = zoom(face, (shape_x / face.shape[0], shape_y / face.shape[1]))
+                face = face.astype(np.float32)
 
-            # Scale
-            face /= float(face.max())
-            face = np.reshape(face.flatten(), (1, 48, 48, 1))
+                # Scale
+                face /= float(face.max())
+                face = np.reshape(face.flatten(), (1, 48, 48, 1))
 
-            # Make Prediction
-            prediction = model.predict(face)
-            prediction_result = np.argmax(prediction)
+                # Make Prediction
+                prediction = model.predict(face)
+                prediction_result = np.argmax(prediction)
 
-            # Rectangle around the face
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # Annotate main image with a label
+                if prediction_result == 0:
+                    prediction = "Angry"
+                elif prediction_result == 1:
+                    prediction = "Disgust"
+                elif prediction_result == 2:
+                    prediction = "Fear"
+                elif prediction_result == 3:
+                    prediction = "Happy"
+                elif prediction_result == 4:
+                    prediction = "Sad"
+                elif prediction_result == 5:
+                    prediction = "Surprise"
+                else:
+                    prediction = "Neutral"
 
-            cv2.putText(frame, "Face #{}".format(i + 1), (x - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0),
-                        2)
+                position = 180*i
+                cv2.putText(frame, prediction, (40, 140 + position),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, 155, 0)
 
-            # Annotate main image with a label
-            if prediction_result == 0:
-                cv2.putText(frame, "Angry", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            elif prediction_result == 1:
-                cv2.putText(frame, "Disgust", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            elif prediction_result == 2:
-                cv2.putText(frame, "Fear", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            elif prediction_result == 3:
-                cv2.putText(frame, "Happy", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            elif prediction_result == 4:
-                cv2.putText(frame, "Sad", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            elif prediction_result == 5:
-                cv2.putText(frame, "Surprise", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            else:
-                cv2.putText(frame, "Neutral", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                read = True
+
+        # Waiting for reading has ended, read again
+        elif time.time() - start_time >= max_seconds:
+            cv2.putText(frame, prediction, (40, 140 + position),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, 155, 0)
+            start_time = time.time()
+            read = False
+
+        # Just display emotion
+        else:
+            cv2.putText(frame, prediction, (40, 140 + position),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, 155, 0)
 
         cv2.imshow('Video', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
+        # R = repeat reading the emotion
+        if keyboard.is_pressed('r'):
+            start_time = time.time()
+            read = False
 
     video_capture.release()
     cv2.destroyAllWindows()
