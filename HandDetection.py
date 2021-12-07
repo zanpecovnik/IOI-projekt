@@ -15,6 +15,28 @@ def findImageInFrontOfHand(avgPosition):
             return imagePosition
     return None
 
+def getQuoteForImage(position, emotion="Vesel"):
+    idx = overlayImagePositions.index(position)
+    return quotes[emotion][idx], idx
+
+quotes = {
+    "Vesel": [
+        "Prvi vesel", "drugi vesel", "tretji vesel", "cetrti vesel", "peti vesel"
+    ],
+    "Jezen": [
+        "Prvi jezen", "drugi jezen", "tretji jezen", "cetrti jezen", "peti jezen"
+    ],
+    "Zalosten": [
+        "Prvi zalosten", "drugi zalosten", "tretji zalosten", "cetrti zalosten", "peti zalosten"
+    ],
+    "Nevtralen": [
+        "Prvi nevtralen", "drugi nevtralen", "tretji nevtralen", "cetrti nevtralen", "peti nevtralen"
+    ],
+    "Presenecen": [
+        "Prvi presenecen", "drugi presenecen", "tretji presenecen", "cetrti presenecen", "peti presenecen"
+    ]
+}
+
 camWidth, camHeight = 1280, 720
 imageDir = "images"
 
@@ -42,6 +64,8 @@ while True:
     img = detector.findHands(img)
     lmList = detector.findPosition(img, draw=False)
     totalFingers = -1
+    quote = None
+    idx = -1
 
     if len(lmList) != 0:
         fingers = []
@@ -67,9 +91,10 @@ while True:
     if imagePosition != None:
         if isMovingImage == False and totalFingers == 0 and prevTotalFingers > 0:
             isMovingImage = True
+
         if isMovingImage and totalFingers == 5:
             isMovingImage = False
-            # show quote
+
         if isMovingImage:
             overlayImagePositions = list(filter(lambda imPos: imPos != imagePosition, overlayImagePositions))
 
@@ -87,9 +112,19 @@ while True:
 
             overlayImagePositions.insert(0, {'x': newX, 'y': newY})
 
-    for position in overlayImagePositions:
-        img[position['y'] : position['y'] + overlayImageSize, position['x'] : position['x'] + overlayImageSize] = overlayImage
+        if isMovingImage == False and totalFingers > 0:
+            quote, idx = getQuoteForImage(imagePosition)
 
-    cv2.imshow("Image", img)
-    cv2.waitKey(1)
+    for i, position in enumerate(overlayImagePositions):
+        if idx > -1 and i == idx:
+            cv2.putText(img, quote, (position['x'], int(position['y'] + overlayImageSize / 2)), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
+        else:
+            img[position['y'] : position['y'] + overlayImageSize, position['x'] : position['x'] + overlayImageSize] = overlayImage
+
     prevTotalFingers = totalFingers
+    cv2.imshow("HandDetection", img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
