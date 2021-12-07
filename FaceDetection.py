@@ -1,43 +1,80 @@
-from tensorflow import keras
-from keras.models import load_model
-from keras.preprocessing.image import img_to_array
-import cv2
+from __future__ import division
+
 import numpy as np
+import cv2
 
-cascPath = "data/haarcascade_frontalface_default.xml"
-modelPath = "data/EmotionDetectionModel.h5"
-face_classifier = cv2.CascadeClassifier(cascPath)
-classifier = load_model(modelPath)
+from scipy.ndimage import zoom
+import dlib
 
-class_labels = ['Jezen', 'Vesel', 'Nevtralen', 'Zalosten', 'Presenecen']
-video_capture = cv2.VideoCapture(0)
+from tensorflow.keras.models import load_model
+from imutils import face_utils
 
-while True:
-    ret, frame = video_capture.read()
-    labels = []
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_classifier.detectMultiScale(gray, 1.3, 5)
 
-    for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        roi_gray = gray[y:y + h, x:x + w]
-        roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
+def work():
+    shape_x = 48
+    shape_y = 48
 
-        if np.sum([roi_gray]) != 0:
-            roi = roi_gray.astype('float') / 255.0
-            roi = img_to_array(roi)
-            roi = np.expand_dims(roi, axis=0)
+    model = load_model('data/video.h5')
+    face_detect = dlib.get_frontal_face_detector()
 
-            preds = classifier.predict(roi)[0]
-            label = class_labels[preds.argmax()]
-            label_position = (x, y)
-            cv2.putText(frame, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-        else:
-            cv2.putText(frame, 'No Face Found', (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+    video_capture = cv2.VideoCapture(0)
 
-    cv2.imshow('Emotion Detector', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    while True:
 
-video_capture.release()
-cv2.destroyAllWindows()
+        # Capture frame-by-frame
+        ret, frame = video_capture.read()
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        rects = face_detect(gray, 1)
+
+        for (i, rect) in enumerate(rects):
+
+            # Face coordinates
+            (x, y, w, h) = face_utils.rect_to_bb(rect)
+            face = gray[y:y + h, x:x + w]
+
+            # Zoom on face
+            face = zoom(face, (shape_x / face.shape[0], shape_y / face.shape[1]))
+            face = face.astype(np.float32)
+
+            # Scale
+            face /= float(face.max())
+            face = np.reshape(face.flatten(), (1, 48, 48, 1))
+
+            # Make Prediction
+            prediction = model.predict(face)
+            prediction_result = np.argmax(prediction)
+
+            # Rectangle around the face
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            cv2.putText(frame, "Face #{}".format(i + 1), (x - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0),
+                        2)
+
+            # Annotate main image with a label
+            if prediction_result == 0:
+                cv2.putText(frame, "Angry", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            elif prediction_result == 1:
+                cv2.putText(frame, "Disgust", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            elif prediction_result == 2:
+                cv2.putText(frame, "Fear", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            elif prediction_result == 3:
+                cv2.putText(frame, "Happy", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            elif prediction_result == 4:
+                cv2.putText(frame, "Sad", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            elif prediction_result == 5:
+                cv2.putText(frame, "Surprise", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            else:
+                cv2.putText(frame, "Neutral", (x + w - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+        cv2.imshow('Video', frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    video_capture.release()
+    cv2.destroyAllWindows()
+
+
+if __name__ == '__main__':
+    work()
