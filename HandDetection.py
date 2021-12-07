@@ -1,6 +1,7 @@
 import cv2
 import os
 import HandDetectionModule as hdm
+import ctypes
 
 def getAveragePositionFromLandmarks(lmList):
     if len(lmList) != 0:
@@ -37,7 +38,6 @@ quotes = {
     ]
 }
 
-camWidth, camHeight = 1280, 720
 imageDir = "images"
 
 overlayImageSize = 180
@@ -50,9 +50,11 @@ overlayImagePositions = [
     {'x': 890, 'y': 540}
 ]
 
+WINDOW_NAME = 'Full'
+
 cap = cv2.VideoCapture(0)
-cap.set(3, camWidth)
-cap.set(4, camHeight)
+cv2.namedWindow(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
 detector = hdm.handDetector(detectionCon=0.75)
 fingerTipIds = [4, 8, 12, 16, 20]
@@ -60,7 +62,25 @@ isMovingImage = False
 prevTotalFingers = -1
 
 while True:
+
+    user32 = ctypes.windll.user32
+    screen_width, screen_height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+
     success, img = cap.read()
+    frame_height, frame_width, _ = img.shape
+
+    scale_width = float(screen_width) / float(frame_width)
+    scale_height = float(screen_height) / float(frame_height)
+
+    if scale_height > scale_width:
+        imgScale = scale_width
+
+    else:
+        imgScale = scale_height
+
+    full_x, full_y = img.shape[1] * imgScale, img.shape[0] * imgScale
+    img = cv2.resize(img, (int(full_x), int(full_y)))
+
     img = detector.findHands(img)
     lmList = detector.findPosition(img, draw=False)
     totalFingers = -1
@@ -101,14 +121,14 @@ while True:
             newX = int(averagePosition['x'] - overlayImageSize / 2)
             if newX < 0:
                 newX = 0
-            if newX >= camWidth - overlayImageSize:
-                newX = camWidth - overlayImageSize
+            if newX >= full_x - overlayImageSize:
+                newX = full_x - overlayImageSize
 
             newY = int(averagePosition['y'] - overlayImageSize / 2)
             if newY < 0:
                 newY = 0
-            if newY >= camHeight - overlayImageSize:
-                newY = camHeight - overlayImageSize
+            if newY >= full_y - overlayImageSize:
+                newY = full_y - overlayImageSize
 
             overlayImagePositions.insert(0, {'x': newX, 'y': newY})
 
@@ -122,7 +142,7 @@ while True:
             img[position['y'] : position['y'] + overlayImageSize, position['x'] : position['x'] + overlayImageSize] = overlayImage
 
     prevTotalFingers = totalFingers
-    cv2.imshow("HandDetection", img)
+    cv2.imshow(WINDOW_NAME, img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

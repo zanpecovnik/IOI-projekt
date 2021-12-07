@@ -98,7 +98,7 @@ def selectedEmotion(frame, emotion, size=50, alpha=0.3):
 
 def work():
 
-    WINDOW_NAME = 'Full Integration'
+    WINDOW_NAME = 'Full'
 
     dataDir = "data"
     shape_x = 48
@@ -134,8 +134,8 @@ def work():
         else:
             imgScale = scale_height
 
-        new_x, new_y = frame.shape[1] * imgScale, frame.shape[0] * imgScale
-        frame = cv2.resize(frame, (int(new_x), int(new_y)))
+        full_x, full_y = frame.shape[1] * imgScale, frame.shape[0] * imgScale
+        frame = cv2.resize(frame, (int(full_x), int(full_y)))
 
         # Read the emotion
         if time.time() - start_time < max_seconds and not read:
