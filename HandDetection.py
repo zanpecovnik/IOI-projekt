@@ -122,13 +122,13 @@ while True:
             if newX < 0:
                 newX = 0
             if newX >= full_x - overlayImageSize:
-                newX = full_x - overlayImageSize
+                newX = int(full_x - overlayImageSize)
 
             newY = int(averagePosition['y'] - overlayImageSize / 2)
             if newY < 0:
                 newY = 0
             if newY >= full_y - overlayImageSize:
-                newY = full_y - overlayImageSize
+                newY = int(full_y - overlayImageSize)
 
             overlayImagePositions.insert(0, {'x': newX, 'y': newY})
 
