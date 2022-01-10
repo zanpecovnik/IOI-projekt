@@ -314,49 +314,109 @@ def topBarInfo(frame, position, correct, total, bingo, guessing, guessedEmotion,
 
 quotes = {
     "default": [
-        "Preizkusite", "Preizkusite", "Preizkusite", "Preizkusite", "Preizkusite"
+        "Z misko izberite\nikono custva in jo\nposkusite izraziti!",
+        "V desnem zgornjem\nkotu se vam\nsesteva rezultat\nuspesnosti!",
+        "Ponovno zajemanje\ncustva pozenete\ns pritiskom tipke R!",
+        "Za izhod iz programa\npritisnite tipko Q!",
+        "Igrajte se s custvi!"
     ],
     "happy_correct": [
-        "Prvi vesel", "Drugi vesel", "Tretji vesel", "Cetrti vesel", "Peti vesel"
+        "Smeh je vedno pol\nzdravjo! Cesitamo za\n osvojeno tocko!",
+        "Cestitamo, uspesno\nste izrazili svoje custvo!\nKar tako naprej!",
+        "Dobra volja je najbolja...",
+        "Uspesno ste izrazili veseljo!",
+        "Bravo!"
     ],
     "happy_incorrect": [
-        "Prvi vesel", "Drugi vesel", "Tretji vesel", "Cetrti vesel", "Peti vesel"
+        "Poskusite ponovno, srecno!",
+        "Nasmejte se, kot da ste\ndobili oceno 10 pri\npredmetu IOI!",
+        "Za izrazanje srece je\npomemben sirok nasmek!",
+        "Pomislite na najlepsi trenuek\nvasega zivljenja in\nposkusite ponovno!",
+        "Nasmejte se, kot da ste\nzadeli na loteriji!"
     ],
     "angry_correct": [
-        "Prvi jezen", "Drugi jezen", "Tretji jezen", "Cetrti jezen", "Peti jezen"
+        "Obvladujte jezo, kot\nobvladujete njeno izrazanje!;)",
+        "Cestitke, pravilno ste izrazili jezo!",
+        "Odlicno, kar tako naprej!",
+        "Bravo!",
+        "Odlicno, kar tako naprej!"
     ],
     "angry_incorrect": [
-        "Prvi jezen", "Drugi jezen", "Tretji jezen", "Cetrti jezen", "Peti jezen"
+        "Znacilnosti jeze so priprte oci\nin kazanje zobov kot pes,\nki ga ne hranite ze\npet dni!",
+        "Poskusite biti jezen\n,kot da vam sestra\nravnokar vzela vaso\nnajljubso majco!",
+        "Poskusite biti jezen\n,kot da vam brat\nravnokar vzel zadni\npiskot iz paketa!",
+        "Poskusite ponovno, srecno!",
+        "Razjezite se kot Hulk!"
     ],
     "sad_correct": [
-        "Prvi zalosten", "Drugi zalosten", "Tretji zalosten", "Cetrti zalosten", "Peti zalosten"
+        "Kljub temu, da obvladate\nizrazati zalost, naj\nbo vase zivljenje vedno veselo!",
+        "Bravo!",
+        "Cesitamo, naj vas ta zalost\nnespremlja na nobenem koraku!",
+        "Cestitke!",
+        "Odlicno, kar tako naprej!"
     ],
     "sad_incorrect": [
-        "Prvi zalosten", "Drugi zalosten", "Tretji zalosten", "Cetrti zalosten", "Peti zalosten"
+        "Upamo, da boste v naslednjem\nposkusu bolj zalostni...",
+        "Pomislite na trenutek v\nzgodnjem otrostvu,\nko vam je umrl domaci\nljubljencek!",
+        "Poskusite ponovno, srecno!",
+        "Poskusite pomisliti\nna najbolj zalosten\ntrenutek vasega zivljenja!",
+        "Ce vas druga ne zalosti\nnaj vas razzalosti ta\nneuspesen poskus!"
     ],
     "neutral_correct": [
-        "Prvi nevtralen", "Drugi nevtralen", "Tretji nevtralen", "Cetrti nevtralen", "Peti nevtralen"
+        "Ste zelo resna oseba!",
+        "Bravo!",
+        "Cestitamo, uspesno ste\nizrazili nevtralen obraz!",
+        "Odlicno, kar tako naprej!",
+        "Uspesno ste izrazili nevtralen obraz!\n Srecno!"
     ],
     "neutral_incorrect": [
-        "Prvi nevtralen", "Drugi nevtralen", "Tretji nevtralen", "Cetrti nevtralen", "Peti nevtralen"
+        "Bodite resni!",
+        "Prosim poskusite znova!",
+        "Znacilnosti nevtralenga obraza\nso ravna usta in\noci v normalnem polozaju!",
+        "Poskusite ponovno, srecno!",
+        "Bodite resni!"
     ],
     "disgust_correct": [
-        "Prvi gnus", "Drugi gnus", "Tretji gnus", "Cetrti gnus", "Peti gnus"
+        "Bravo!",
+        "Naj vasa hrana\nnikoli ne bo\ntaksna kot vas obraz\npri izrazanju gnusa!",
+        "Odlicno, kar tako naprej!",
+        "Cestitke, odlicno ste izrazili gnus!",
+        "Odlicno, kar tako naprej!"
     ],
     "disgust_incorrect": [
-        "Prvi gnus", "Drugi gnus", "Tretji gnus", "Cetrti gnus", "Peti gnus"
+        "Poskusite se namrsiti,\nkot da vidite, da mama\nv nedeljo na mizo\npripravlja ohrovt!",
+        "Poskusite narediti grimaso,\nki jo naredite ko vidite\nvaso najslabo jed\nna mizi!",
+        "Poskusite ponovno, srecno!",
+        "Katera hrane vam\nna obrazu pricara\ngrimaso? Pomislite\nnanjo in poskusite\nse enkrat!",
+        "Naslednjic vam bo uspelo!\nSrecno!"
     ],
     "fear_correct": [
-        "Prvi strah", "Drugi strah", "Tretji strah", "Cetrti strah", "Peti strah"
+        "Uspesno ste izrazili strah! Srecno naprej!",
+        "Odlicno, kar tako naprej!",
+        "Naj vas v nikoli v\nzivljenju ne spremlja strah\nkakrsnega ste izrazili\nsedaj!",
+        "Bravo!",
+        "Odlicno, kar tako naprej!"
     ],
     "fear_incorrect": [
-        "Prvi strah", "Drugi strah", "Tretji strah", "Cetrti strah", "Peti strah"
+        "Ustrasite se, kot da je\nv vaso hiso ravnokar prisel\nmorilec!",
+        "Pomislite kako so vas\nprijatelji ustrasili\nza rojstno dnevno zabavo!",
+        "Pomislite na najhujso\n grozljivko, ki ste\njo kdaj gledali!",
+        "Srecno v naslednjih poskusih...\nne bodite neustrasni!",
+        "Poskusite ponovno, srecno!"
     ],
     "surprise_correct": [
-        "Prvi presenecen", "Drugi presenecen", "Tretji presenecen", "Cetrti presenecen", "Peti presenecen"
+        "Odlicno, kar tako naprej!",
+        "Bravo!",
+        "Ali ste zadeli loterijo?\nIzgledate ravno tako zacudeni!\nBravo!",
+        "Odlicno, kar tako naprej!",
+        "Uspesno ste izrazili presenecanje!\nKar tako naprej, srecno!"
     ],
     "surprise_incorrect": [
-        "Prvi presenecen", "Drugi presenecen", "Tretji presenecen", "Cetrti presenecen", "Peti presenecen"
+        "Poskusite biti zacuden\nkot bi vam kdo ravnokar\npovedal, da ste zadeli\nna loteriji!",
+        "Odprite usta v obliki\ncrke 'O'! Srecno!",
+        "Pri izrazanju presenecanja\nso pomembne siroke oci\nin mocno odprta usta!",
+        "Poskusite biti zacuden\nkot bi vam kdo ravnokar\npovedal, da ste zadeli\n Eurojackpot!",
+        "Poskusite ponovno, srecno!"
     ]
 }
 
@@ -526,11 +586,13 @@ def work():
                 overlayImagePositions.insert(0, {'x': newX, 'y': newY})
 
             if isMovingImage == False and totalFingers > 0:
-                quote, idx = getQuoteForImage(imagePosition, overlayImagePositions, prediction, bingo)
+                quote, idx = getQuoteForImage(imagePosition, overlayImagePositions, predictedEmotion, bingo)
 
         for i, position in enumerate(overlayImagePositions):
             if idx > -1 and i == idx:
-                cv2.putText(frame, quote, (position['x'], int(position['y'] + overlayImageSize / 2)), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
+                for j, line in enumerate(quote.split('\n')):
+                    y = int(position['y'] + overlayImageSize / 2) + j * 30
+                    cv2.putText(frame, line, (position['x'], y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
             else:
                 frame[position['y'] : position['y'] + overlayImageSize, position['x'] : position['x'] + overlayImageSize] = overlayImage
 
